@@ -51,7 +51,9 @@ class BaseTusRequest:
             "upload-offset": str(uploader.offset),
             "Content-Type": "application/offset+octet-stream",
         }
+        self._request_cookies = {}
         self._request_headers.update(uploader.get_headers())
+        self._request_cookies.update(uploader.get_cookies())
         self._content_length = uploader.get_request_length()
         self._upload_checksum = uploader.upload_checksum
         self._checksum_algorithm = uploader.checksum_algorithm
@@ -83,6 +85,7 @@ class TusRequest(BaseTusRequest):
                 self._url,
                 data=chunk,
                 headers=self._request_headers,
+                cookies=self._request_cookies,
                 verify=self.verify_tls_cert,
             )
             self.status_code = resp.status_code
@@ -111,7 +114,11 @@ class AsyncTusRequest(BaseTusRequest):
             async with aiohttp.ClientSession(loop=self.io_loop) as session:
                 ssl = None if self.verify_tls_cert else False
                 async with session.patch(
-                    self._url, data=chunk, headers=self._request_headers, ssl=ssl
+                    self._url,
+                    data=chunk,
+                    headers=self._request_headers,
+                    cookies=self._request_cookies,
+                    ssl=ssl,
                 ) as resp:
                     self.status_code = resp.status
                     self.response_headers = {

@@ -37,6 +37,12 @@ class UploaderTest(mixin.Mixin):
         self.client.set_headers({'foo': 'bar'})
         self.assertEqual(self.uploader.get_headers(), {"Tus-Resumable": "1.0.0", 'foo': 'bar'})
 
+    def test_cookies(self):
+        self.assertEqual(self.uploader.get_cookies(), {})
+
+        self.client.set_cookies({'foo': 'bar'})
+        self.assertEqual(self.uploader.get_cookies(), {'foo': 'bar'})
+
     @responses.activate
     def test_get_offset(self):
         responses.add(responses.HEAD, self.uploader.url,

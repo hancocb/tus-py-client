@@ -150,6 +150,14 @@ class BaseUploader:
             self.__checksum_algorithm,
         ) = self.CHECKSUM_ALGORITHM_PAIR
 
+    def get_cookies(self):
+        """
+        Return cookies of the uploader instance. This would include the cookies of the
+        client instance.
+        """
+        client_cookies = getattr(self.client, "cookies", {})
+        return dict(**client_cookies)
+
     def get_headers(self):
         """
         Return headers of the uploader instance. This would include the headers of the
@@ -164,6 +172,11 @@ class BaseUploader:
         headers["upload-length"] = str(self.get_file_size())
         headers["upload-metadata"] = ",".join(self.encode_metadata())
         return headers
+
+    def get_url_creation_cookies(self):
+        """Return cookies required to create upload url"""
+        cookies = self.get_cookies()
+        return cookies
 
     @property
     def checksum_algorithm(self):

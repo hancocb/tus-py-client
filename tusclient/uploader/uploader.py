@@ -69,6 +69,7 @@ class Uploader(BaseUploader):
         resp = requests.post(
             self.client.url,
             headers=self.get_url_creation_headers(),
+            cookies=self.get_url_creation_cookies(),
             verify=self.verify_tls_cert,
         )
         url = resp.headers.get("location")
@@ -151,9 +152,13 @@ class AsyncUploader(BaseUploader):
         try:
             async with aiohttp.ClientSession() as session:
                 headers = self.get_url_creation_headers()
+                cookies = self.get_url_creation_cookies()
                 ssl = None if self.verify_tls_cert else False
                 async with session.post(
-                    self.client.url, headers=headers, ssl=ssl
+                    self.client.url,
+                    headers=headers,
+                    cookies=cookies,
+                    ssl=ssl,
                 ) as resp:
                     url = resp.headers.get("location")
                     if url is None:

@@ -23,6 +23,14 @@ class TusClientTest(unittest.TestCase):
         self.client.set_headers({'food': 'at the bar'})
         self.assertEqual(self.client.headers, {'foo': 'bar tender', 'food': 'at the bar'})
 
+    def test_set_cookies(self):
+        self.client.set_cookies({'foo': 'bar tender'})
+        self.assertEqual(self.client.cookies, {'foo': 'bar tender'})
+
+        # uploader cookies must update when client cookies change
+        self.client.set_cookies({'food': 'at the bar'})
+        self.assertEqual(self.client.cookies, {'foo': 'bar tender', 'food': 'at the bar'})
+
     @responses.activate
     def test_uploader(self):
         url = 'http://tusd.tusdemo.net/files/15acd89eabdf5738ffc'
